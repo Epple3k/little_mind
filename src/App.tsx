@@ -192,7 +192,7 @@ export default function App() {
         <div className="absolute left-[11%] top-[17%] w-[13%] aspect-square rounded-full blur-2xl opacity-45 pointer-events-none" style={{ background: 'conic-gradient(from 200deg,#22e04a,#2a4bff,#ff6fb5,#ff2a1f,#22e04a)' }} />
         <div className="absolute left-[66%] top-[57%] w-[27%] h-[12%] rounded-full bg-[#ff2a1f] blur-3xl opacity-30 pointer-events-none" />
         <div className="absolute left-[76%] top-[14%] w-[8%] h-[6%] rounded-full bg-[#22e04a] blur-2xl opacity-60 pointer-events-none" />
-        <div className="absolute left-[33.04%] w-[26.8%] top-[7.8%] aspect-square rounded-full border-[3px] border-[#141414] pointer-events-none shadow-[0_0_0_8px_#14141408] transition-shadow duration-300" />
+        <div className="absolute left-[33.04%] w-[26.8%] top-[7.8%] aspect-square rounded-full border-[2px] border-[#141414] pointer-events-none" />
         <svg viewBox="0 0 1120 640" className="absolute inset-0 pointer-events-none" fill="none" stroke="#141414" strokeWidth=".7">
           {/* connectors: everything speaks to the face (cx 520, cy 200) */}
           <path d="M330 170 C 370 120, 410 110, 440 130" strokeDasharray="2 4" opacity={active === 'temperature' ? 1 : .35} />
@@ -209,16 +209,16 @@ export default function App() {
         <div className="absolute left-[37%] w-[18.8%] top-[10%]"><Face p={p} active={active} /></div>
         <div className="absolute left-[44%] top-[2%] text-[8px] uppercase tracking-[.25em] opacity-40">readout · {active ?? 'idle'}</div>
 
-        {/* enlarged seed constellation: a legible, draggable little orbit */}
-        <div className={`absolute left-[73%] top-[11%] flex flex-col items-center gap-2 ${box('seed')}`}>
-          <svg viewBox="-38 -38 76 76" aria-label="Drag to change the seed" className={`w-[100px] overflow-visible ${hit} transition-transform duration-300 ${pulse('seed')}`} {...dS}>
-            <circle r="32" fill="#e2dfd7" fillOpacity=".45" stroke="#141414" strokeWidth=".65" strokeDasharray="1.5 3.5" />
-            <circle r="26" fill="none" stroke="#141414" strokeWidth=".35" strokeDasharray="1 6" opacity=".3" />
+        {/* seed: a slightly enlarged, deliberately spare constellation */}
+        <div className={`absolute left-[74%] top-[14%] flex flex-col items-center gap-1.5 ${box('seed')}`}>
+          <svg viewBox="-38 -38 76 76" aria-label="Drag to change the seed" className={`w-[84px] overflow-visible ${hit} transition-transform duration-300 ${pulse('seed')}`} {...dS}>
+            <circle r="32" fill="none" stroke="#141414" strokeWidth=".5" strokeDasharray="1 3" opacity=".7" />
+            <circle r="26" fill="none" stroke="#141414" strokeWidth=".35" strokeDasharray="1 6" opacity=".2" />
             {(() => {
               const r = rng(p.seed + 7);
               const nodes = Array.from({ length: 7 }, () => [(r() * 2 - 1) * 24, (r() * 2 - 1) * 24]);
               return nodes.map(([x, y], i) => <g key={i}>
-                {i > 0 && <line x1={nodes[i - 1][0]} y1={nodes[i - 1][1]} x2={x} y2={y} stroke="#141414" strokeWidth=".75" opacity=".75" />}
+                {i > 0 && <line x1={nodes[i - 1][0]} y1={nodes[i - 1][1]} x2={x} y2={y} stroke="#141414" strokeWidth=".65" opacity=".75" />}
                 <circle cx={x} cy={y} r={i === 0 ? 3.6 : 2.2} fill={i === 0 ? '#ff6fb5' : '#141414'} stroke={i === 0 ? '#141414' : 'none'} strokeWidth=".5" className="transition-all duration-300" />
               </g>);
             })()}
@@ -230,36 +230,49 @@ export default function App() {
           </div>
         </div>
 
-        {/* temperature: a thermometric dial with an active hot/cold column */}
+        {/* temperature: irregular isotherms, an abstract portrait of sampling heat */}
         <div className={`absolute left-[9%] top-[13%] flex flex-col items-start gap-2 ${box('temperature')}`}>
           <div className={`relative w-44 h-44 ${hit} transition-transform duration-300 ${pulse('temperature')}`} {...dT} aria-label="Drag to adjust temperature">
-            <div className="absolute inset-1 rounded-full blur-2xl pointer-events-none transition-opacity duration-300" style={{ background: p.temperature < .65 ? 'radial-gradient(circle,#2a4bff,transparent 70%)' : 'radial-gradient(circle,#ff6fb5,#ff2a1f33,transparent 75%)', opacity: active === 'temperature' ? .6 : .26 }} />
+            <div className="absolute inset-3 rounded-full blur-xl pointer-events-none transition-opacity duration-300" style={{ background: 'radial-gradient(circle,#ff6fb5,transparent 72%)', opacity: active === 'temperature' ? .45 : .18 }} />
             <svg viewBox="0 0 100 100" className="relative overflow-visible">
               <defs>
-                <linearGradient id="alm-temp-spectrum" x1="0%" y1="100%" x2="0%" y2="0%">
-                  <stop offset="0%" stopColor="#2a4bff" /><stop offset="50%" stopColor="#ff6fb5" /><stop offset="100%" stopColor="#ff2a1f" />
-                </linearGradient>
+                <radialGradient id="alm-thermal-field">
+                  <stop offset="0%" stopColor={p.temperature < .6 ? '#2a4bff' : p.temperature > 1.35 ? '#ff2a1f' : '#ff6fb5'} stopOpacity={0.12 + p.temperature * .12} />
+                  <stop offset="65%" stopColor="#ff6fb5" stopOpacity=".045" />
+                  <stop offset="100%" stopColor="#141414" stopOpacity="0" />
+                </radialGradient>
               </defs>
               {Array.from({ length: 41 }, (_, i) => {
                 const a = (135 + i * 6.75) * Math.PI / 180;
                 const on = i / 40 <= p.temperature / 2;
-                return <line key={i} x1={50 + Math.cos(a) * 44} y1={50 + Math.sin(a) * 44} x2={50 + Math.cos(a) * (i % 10 ? 47 : 50)} y2={50 + Math.sin(a) * (i % 10 ? 47 : 50)} stroke={on ? '#141414' : '#1414143c'} strokeWidth=".8" />;
+                return <line key={i} x1={50 + Math.cos(a) * 44} y1={50 + Math.sin(a) * 44} x2={50 + Math.cos(a) * (i % 10 ? 47 : 50)} y2={50 + Math.sin(a) * (i % 10 ? 47 : 50)} stroke={on ? '#141414' : '#14141444'} strokeWidth=".8" />;
               })}
               <circle cx="50" cy="50" r="36" fill="#141414" />
-              {/* Subtle isotherms give the otherwise technical thermometer an organic quality. */}
-              {[0, 1, 2].map(i => <path key={i} d={`M${67 + i * 4} ${35 - i * 4} Q${77 + i * 3} 50 ${67 + i * 4} ${65 + i * 4}`} stroke={p.temperature > 1 ? '#ff6fb5' : '#c5c8ff'} strokeWidth=".7" fill="none" opacity={.25 + p.temperature * .16} />)}
-              {[0, 1, 2, 3, 4].map(i => <line key={i} x1="29" x2={i % 2 ? "33" : "36"} y1={29 + i * 9} y2={29 + i * 9} stroke="#efece4" strokeWidth=".6" opacity=".5" />)}
-              <rect x="46" y="21" width="8" height="45" rx="4" fill="#252525" stroke="#efece4" strokeWidth="1.25" />
-              <rect x="48" y={62 - (p.temperature / 2) * 37} width="4" height={4 + (p.temperature / 2) * 37} rx="2" fill="url(#alm-temp-spectrum)" className="transition-all duration-150" />
-              <circle cx="50" cy="67" r="11" fill="#141414" stroke="#efece4" strokeWidth="1.25" />
-              <circle cx="50" cy="67" r="7.6" fill={p.temperature < .55 ? '#2a4bff' : p.temperature < 1.3 ? '#ff6fb5' : '#ff2a1f'} className="transition-all duration-300" />
-              <circle cx="47.5" cy="64.5" r="2" fill="#efece4" opacity=".65" />
+              <circle cx="50" cy="50" r="35" fill="url(#alm-thermal-field)" />
+              {/* A topographic heat signature: the higher the temperature, the less orderly its contour rings. */}
+              {Array.from({ length: 6 }, (_, j) => {
+                const points = Array.from({ length: 65 }, (_, i) => {
+                  const a = i / 64 * Math.PI * 2;
+                  const r = 6.7 + j * 4.55
+                    + p.temperature * (Math.sin(a * 3 + j * .52) * (1 + j * .1)
+                    + Math.sin(a * 5 - j * .37) * .55);
+                  return [50 + Math.cos(a) * r, 50 + Math.sin(a) * r];
+                });
+                const d = points.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(2)} ${y.toFixed(2)}`).join(' ') + ' Z';
+                const accent = j === 2;
+                return <path key={j} d={d} fill="none"
+                  stroke={accent ? (p.temperature < .5 ? '#9c9cff' : p.temperature > 1.4 ? '#ff5439' : '#ff6fb5') : '#efece4'}
+                  strokeWidth={accent ? 1.15 : .68}
+                  opacity={accent ? .98 : .23 + j * .062}
+                  strokeLinejoin="round"
+                  className="transition-[stroke,opacity] duration-200" />;
+              })}
+              <circle cx="50" cy="50" r="1.35" fill="#efece4" />
+              <path d="M50 44 v-2 M50 56 v2 M44 50 h-2 M56 50 h2" stroke="#efece4" strokeWidth=".55" opacity=".42" />
               {(() => {
                 const a = (135 + p.temperature / 2 * 270) * Math.PI / 180;
-                return <circle cx={50 + Math.cos(a) * 40} cy={50 + Math.sin(a) * 40} r="3.5" fill={p.temperature < .65 ? '#2a4bff' : '#ff6fb5'} stroke="#141414" strokeWidth=".8" />;
+                return <circle cx={50 + Math.cos(a) * 40} cy={50 + Math.sin(a) * 40} r="3.2" fill="#ff6fb5" stroke="#141414" strokeWidth=".8" />;
               })()}
-              <text x="22" y="91" fontSize="4" fill="#141414" opacity=".6" letterSpacing=".8">COLD</text>
-              <text x="70" y="91" fontSize="4" fill="#141414" opacity=".6" letterSpacing=".8">HOT</text>
             </svg>
           </div>
           <div className="flex flex-col gap-1">
