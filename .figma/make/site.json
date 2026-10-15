@@ -1,10 +1,11 @@
 {
-  "description": "Engage with an interactive interface that visualizes and controls local language models through expressive parameters, enhancing user understanding and creativity.",
+  "description": "An interactive design experiment making language model sampling controls visible, tactile, and a little more human-readable. Demonstration uses simulated token probabilities.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
     "ignoreReducedMotion": false
-  }
+  },
+  "title": "A Little Mind · Sampling Instrument"
 }
