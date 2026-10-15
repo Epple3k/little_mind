@@ -1,0 +1,10 @@
+{
+  "description": "Engage with an interactive interface that visualizes and controls local language models through expressive parameters, enhancing user understanding and creativity.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

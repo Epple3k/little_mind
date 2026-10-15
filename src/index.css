@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+@import 'tailwindcss';
+body{background:#efece4;color:#141414;font-family:'IBM Plex Mono',monospace;}
+.disp{font-family:'Instrument Serif',serif;}
+.tip{position:relative}
+.tip .tt{opacity:0;pointer-events:none;transition:opacity .2s;position:absolute;left:0;top:100%;margin-top:4px;width:180px;font-size:10px;background:#141414;color:#efece4;padding:6px 8px;z-index:20}
+.tip:hover .tt,.tip:focus-within .tt{opacity:1}
+input[type=number]{background:transparent;border-bottom:1px solid #14141455;width:52px;font-size:10px;outline:none}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
